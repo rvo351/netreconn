@@ -1,5 +1,8 @@
 # library to access linux commands
 import os
+import subprocess
+import time
+
 ipaddress = ""
 
 def ipadd():
@@ -45,7 +48,7 @@ def john():
 
 
 def fuzz():
-    os.system("ffuf -u '" + url() + "?FUZZ=/etc/passwd’ -w /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt -fs 0")
+    os.system("ffuf -u http://" + url() + "/FUZZ" + " -w /usr/share/wordlists/SecLists/Discovery/Web-Content/common.txt")
 
 def port():
     temp_port = input("Enter port [80]")
@@ -71,6 +74,14 @@ def dirb():
     else:
         print("Invalid choice")
 
+def gobust():
+    choice = input("[1] = http\n[2] = https\nEnter choice: ")
+    if choice == "1":
+        os.system("gobuster -u http://" + url() + "/" + " -w /usr/share/wordlists/dirb/common.txt dir")
+    elif choice == "2":
+        os.system("gobuster -u https://" + url() + "/" + " -w /usr/share/wordlists/dirb/common.txt dir")
+    else:
+        print("Invalid choice")
 
 def harvester():
     os.system("theHarvester -l 500 -d " + ipadd() + " -b google")
@@ -118,9 +129,44 @@ def nmap():
     # ipadd = input("Enter ip address of host: ")
     os.system("sudo nmap -p- -sC -sV -oX " + filename + " " + ipadd())
     ques2 = input("Would like you like to see result firefox [y/n]: ")
-    if ques2 == "y" or ques == "Y":
+    if ques2 == "y" or ques2 == "Y":
         os.system("xsltproc " + filename + " -o temp.html")
         os.system("firefox " + "temp.html")
+
+
+def nmap2():
+    ques = input("Would you like to save to a file [y/n]: ")
+    if ques == "y" or ques == "Y":
+        filename = input("Enter filename: ")
+    else:
+        filename = "results.xml"
+    command = "sudo nmap -p- -sC -sV -oX " + filename + " " + ipadd()
+    # Echo Command
+    print("Executing\n", command)
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # Print dots while the command is running
+    while process.poll() is None:
+        print("\r|", end="", flush=True)
+        time.sleep(0.5)
+        print("\r/", end="", flush=True)
+        time.sleep(0.5)
+        print("\r-", end="", flush=True)
+        time.sleep(0.5)
+        print("\r\\", end="", flush=True)
+        time.sleep(0.5)
+    # Capture and decode the command output
+    output, error = process.communicate()
+    output = output.decode("utf-8")
+    # Print the final result
+    print("\nResult:")
+    print(output)
+    ques2 = input("Would like you like to see result firefox [y/n]: ")
+    if ques2 == "y" or ques2 == "Y":
+        os.system("xsltproc " + filename + " -o temp.html")
+        os.system("firefox " + "temp.html")
+
+
+
 
 
 # function data creates user.txt and pass.txt
@@ -240,6 +286,8 @@ def webcrawl():
     print("\nFiles are stored under directory named " +  ipaddress + "\n")
     os.system("ls -la ./" + ipaddress )
 
+def dnsrecon():
+    os.system("dnsrecon -t brt -d " + url())
 
 def banner():
     print("\n")
@@ -261,15 +309,17 @@ while True:
     print("[2] Webcrawl download files")
     print("[3] Convert files to binary")
     print("[4] Create username password files")
-    print("[5] Run nmap")
-    print("[6] Run hydra")
-    print("[7] Run smbclient")
-    print("[8] Run theHarvester")
-    print("[9] Run dirbuster")
-    print("[A] Run FUZZ")
-    print("[B] Run nikto")
-    print("[C] Run JohnTR")
-    print("[D] Run Enum4linux")
+    print("[5] nmap (scan 4 open ports")
+    print("[6] hydra (password cracker)")
+    print("[7] smbclient (find samba shares)")
+    print("[8] theHarvester (get info)")
+    print("[9] dirbuster (find directories")
+    print("[A] FUZZ")
+    print("[B] nikto (web vulnerability")
+    print("[C] JohnTR")
+    print("[D] Enum4linux")
+    print("[E] gobuster (Hidden webpages")
+    print("[F] dnsrecon (find subdomains")
     print("[X] to exit")
     ans = input("Input your selection :")
     if (ans == "1"):
@@ -281,7 +331,7 @@ while True:
     elif (ans == "4"):
         userpass()
     elif (ans == "5"):
-        nmap()
+        nmap2()
     elif (ans == "6"):
         hydra()
     elif (ans == "7"):
@@ -298,6 +348,10 @@ while True:
         john()
     elif (ans == "D") or (ans == "d"):
         enum()
+    elif (ans == "E") or (ans == "e"):
+        gobust()
+    elif (ans == "F") or (ans == "f"):
+        dnsrecon()
     elif (ans == "x") or (ans == "X"):
         print("Goodbye")
         break
