@@ -230,7 +230,7 @@ def nmap():
     # ipadd = input("Enter ip address of host: ")
     os.system("sudo nmap -p- -sC -sV -oX " + filename + " " + ipadd())
     ques2 = input("Would like you like to see result firefox [y/n]: ")
-    if ques2 == "y" or ques2 == "Y":
+    if ques2.lower() == "y":
         os.system("xsltproc " + filename + " -o temp.html")
         os.system("firefox " + "temp.html")
 
