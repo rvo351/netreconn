@@ -131,15 +131,21 @@ def john():
     print("Running John the Ripper")
     print("Assuming file:key has been created")
     print("Creating file:hash from file:key using john:")
-    os.system("ssh2john key > hash")
+    command = "ssh2john key > hash"
+    print(f"{command}")
+    os.system(command)
     print("Cracking password from file:hash using rockyou.txt")
-    os.system("john -w=/usr/share/wordlists/rockyou.txt hash")
+    command = "john -w=/usr/share/wordlists/rockyou.txt hash"
+    print(f"{command}")
+    os.system(command)
     print("With this private key password, you now can use it on key on [ssh -i key user@host]")
     print(" goto http://unix4lyfe.org to generate Hash")
 
 
 def fuzz():
-    os.system("ffuf -u http://" + url() + "/FUZZ" + " -w /usr/share/wordlists/SecLists/Discovery/Web-Content/common.txt")
+    command = "ffuf -u http://" + url() + "/FUZZ" + " -w /usr/share/wordlists/SecLists/Discovery/Web-Content/common.txt"
+    print(f"{command}")
+    os.system(command)
 
 def nikto():
     #ipa = input("Enter IP address: ")
@@ -153,9 +159,13 @@ def nikto():
 def dirb():
     choice = input("[1] = http\n[2] = https\nEnter choice: ")
     if choice == "1":
-        os.system("dirb http://" + url() + ":" + port() + "/")
+        command = "dirb http://" + url() + ":" + port() + "/"
+        print(f"{command}")
+        os.system(command)
     elif choice == "2":
         os.system("dirb https://" + url() + ":" + port() + "/")
+        print(f"{command}")
+        os.system(command)
     else:
         print("Invalid choice")
 
@@ -177,7 +187,7 @@ def hydra():
     if service != "wpa":
         loginname = input("Enter username or enter X to use user.txt :")
         password = input("Enter password or enter X to use pass.txt or R to use rockyou.txt :")
-        if ((loginname != "X") or (loginname != "x")):
+        if loginname.upper() != "X":
             command = "echo " + loginname + " > user.txt"
             os.system(command)
             print(f"{command}")
