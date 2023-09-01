@@ -5,7 +5,6 @@ import time
 import sys
 ipaddress = ""
 ports = ""
-
 def is_running_as_sudo():
     return os.geteuid() == 0
 
@@ -16,94 +15,6 @@ def ipadd():
        ipaddress = temp_ipaddress
     print(ipaddress)
     return ipaddress
-
-
-def iface():
-    interface = str(input("Enter interface name[eth0]: "))
-    if len(interface) == 0:
-        interface = "eth0"
-    print(interface)
-    return interface
-
-
-def url():
-    urll = str(input("Enter url of target :"))
-    return urll
-
-
-def subnet():
-    ipsubnet = str(input("Enter IP Subnet: "))
-    return ipsubnet
-
-
-def enum():
-    os.system("enum4linux -a " + ipadd())
-
-
-def john():
-    print("Running John the Ripper")
-    print("Assuming file:key has been created")
-    print("Creating file:hash from file:key using john:")
-    os.system("ssh2john key > hash")
-    print("Cracking password from file:hash using rockyou.txt")
-    os.system("john -w=/usr/share/wordlists/rockyou.txt hash")
-    print("With this private key password, you now can use it on key on [ssh -i key user@host]")
-    print(" goto http://unix4lyfe.org to generate Hash")
-
-
-def fuzz():
-    os.system("ffuf -u http://" + url() + "/FUZZ" + " -w /usr/share/wordlists/SecLists/Discovery/Web-Content/common.txt")
-
-def port():
-    temp_port = input("Enter port [80] :")
-    if len(temp_port) == 0:
-        ports = "80"
-    else:
-        ports = temp_port
-    print(ports)
-    return ports
-
-def nikto():
-    #ipa = input("Enter IP address: ")
-    #os.system("nikto -C all -h " + ipa)
-    command = "nikto -C all -h " + ipadd() + " -p " + port()
-    print("Excuting the following command")
-    print("\033[91m" + f"{command}")
-    os.system(command)
-    print("\033[0m")
-
-def dirb():
-    choice = input("[1] = http\n[2] = https\nEnter choice: ")
-    if choice == "1":
-        os.system("dirb http://" + url() + ":" + port() + "/")
-    elif choice == "2":
-        os.system("dirb https://" + url() + ":" + port() + "/")
-    else:
-        print("Invalid choice")
-
-def gobust():
-    choice = input("[1] = http\n[2] = https\nEnter choice: ")
-    if choice == "1":
-        os.system("gobuster -u http://" + url() + "/" + " -w /usr/share/wordlists/dirb/common.txt dir")
-    elif choice == "2":
-        os.system("gobuster -u https://" + url() + "/" + " -w /usr/share/wordlists/dirb/common.txt dir")
-    else:
-        print("Invalid choice")
-
-def harvester():
-    os.system("theHarvester -l 500 -d " + ipadd() + " -b google")
-
-def is_running_as_sudo():
-    return os.geteuid() == 0
-
-def ipadd():
-    global ipaddress
-    temp_ipaddress = str(input("Enter ip address of host ["  + ipaddress + "]:"))
-    if len(temp_ipaddress) > 0:
-       ipaddress = temp_ipaddress
-    print(ipaddress)
-    return ipaddress
-
 
 def iface():
     interface = str(input("Enter interface name[eth0]: "))
@@ -147,6 +58,15 @@ def fuzz():
     print(f"{command}")
     os.system(command)
 
+def port():
+    temp_port = input("Enter port [80] :")
+    if len(temp_port) == 0:
+        ports = "80"
+    else:
+        ports = temp_port
+    print(ports)
+    return ports
+
 def nikto():
     #ipa = input("Enter IP address: ")
     #os.system("nikto -C all -h " + ipa)
@@ -156,6 +76,7 @@ def nikto():
     os.system(command)
     print("\033[0m")
 
+
 def dirb():
     choice = input("[1] = http\n[2] = https\nEnter choice: ")
     if choice == "1":
@@ -163,7 +84,7 @@ def dirb():
         print(f"{command}")
         os.system(command)
     elif choice == "2":
-        os.system("dirb https://" + url() + ":" + port() + "/")
+        command = "dirb https://" + url() + ":" + port() + "/"
         print(f"{command}")
         os.system(command)
     else:
@@ -177,6 +98,7 @@ def gobust():
         os.system("gobuster -u https://" + url() + "/" + " -w /usr/share/wordlists/dirb/common.txt dir")
     else:
         print("Invalid choice")
+
 
 def harvester():
     os.system("theHarvester -l 500 -d " + ipadd() + " -b google")
