@@ -7,7 +7,6 @@ ipaddress = ""
 ports = ""
 def is_running_as_sudo():
     return os.geteuid() == 0
-
 def ipadd():
     global ipaddress
     temp_ipaddress = str(input("Enter ip address of host ["  + ipaddress + "]:"))
@@ -22,7 +21,6 @@ def iface():
         interface = "eth0"
     print(interface)
     return interface
-
 
 def url():
     urll = str(input("Enter url of target :"))
@@ -378,23 +376,23 @@ while True:
     print("[G] Unshadow Password File Linux")
     print("[X] to exit")
     ans = input("Input your selection :")
-    if (ans == "1"):
+    if ans == "1":
         arpscan()
-    elif (ans == "2"):
+    elif ans == "2":
         webcrawl()
-    elif (ans == "3"):
+    elif ans == "3":
         hexconvert()
-    elif (ans == "4"):
+    elif ans == "4":
         userpass()
-    elif (ans == "5"):
+    elif ans == "5":
         nmap2()
-    elif (ans == "6"):
+    elif ans == "6":
         hydra()
-    elif (ans == "7"):
+    elif ans == "7":
         smbclient()
-    elif (ans == "8"):
+    elif ans == "8":
         harvester()
-    elif (ans == "9"):
+    elif ans == "9":
         dirb()
     elif ans.upper() == "A":
         fuzz()
