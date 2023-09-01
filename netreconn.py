@@ -173,7 +173,7 @@ def harvester():
 
 #temp
 def hydra():
-    service = input("Enter service ssh/telnet/wpa :")
+    service = input("Enter service ssh/telnet/wpa/ftp :")
     if service != "wpa":
         loginname = input("Enter username or enter X to use user.txt :")
         password = input("Enter password or enter X to use pass.txt or R to use rockyou.txt :")
@@ -237,7 +237,7 @@ def nmap():
 
 def nmap2():
     ques = input("Would you like to save to a file [y/n]: ")
-    if ques == "y" or ques == "Y":
+    if ques.lower() == "y":
         filename = input("Enter filename: ")
     else:
         filename = "results.xml"
@@ -353,7 +353,9 @@ def unshadow():
          shadow = "shadow"
     command = "unshadow " + passwd + " " + shadow + " > mypass.txt"
     command2 = "john --wordlist=/usr/share/wordlists/rockyou.txt mypass.txt"
+    print(f"{command}")
     os.system(command)
+    print(f"{command2}")
     os.system(command2)
 
 # function that loads the file to be converted
@@ -403,7 +405,9 @@ def webcrawl():
     os.system("ls -la ./" + ipaddress )
 
 def dnsrecon():
-    os.system("dnsrecon -t brt -d " + url())
+    command = "dnsrecon -t brt -d " + url()
+    print(f"{command}")
+    os.system(command)
 
 def banner():
     print("\n")
