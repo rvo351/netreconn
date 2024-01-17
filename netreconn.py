@@ -5,8 +5,10 @@ import time
 import sys
 ipaddress = ""
 ports = ""
+
 def is_running_as_sudo():
     return os.geteuid() == 0
+
 def ipadd():
     global ipaddress
     temp_ipaddress = str(input("Enter ip address of host ["  + ipaddress + "]:"))
@@ -15,12 +17,106 @@ def ipadd():
     print(ipaddress)
     return ipaddress
 
+def binwalk():
+    file = str(input("Enter name of file: "))
+    os.system("binwalk -e" + file)
+
 def iface():
     interface = str(input("Enter interface name[eth0]: "))
     if len(interface) == 0:
         interface = "eth0"
     print(interface)
     return interface
+
+
+def url():
+    urll = str(input("Enter url of target : "))
+    return urll
+
+
+def subnet():
+    ipsubnet = str(input("Enter IP Subnet: "))
+    return ipsubnet
+
+
+def enum():
+    os.system("enum4linux -a " + ipadd())
+
+
+def john():
+    print("Running John the Ripper")
+    print("Assuming file:key has been created")
+    print("Creating file:hash from file:key using john:")
+    os.system("ssh2john key > hash")
+    print("Cracking password from file:hash using rockyou.txt")
+    os.system("john -w=/usr/share/wordlists/rockyou.txt hash")
+    print("With this private key password, you now can use it on key on [ssh -i key user@host]")
+    print(" goto http://unix4lyfe.org to generate Hash")
+
+
+def fuzz():
+    os.system("ffuf -u http://" + url() + "/FUZZ" + " -w /usr/share/wordlists/SecLists/Discovery/Web-Content/common.txt")
+
+def port(portservice):
+    port1 = 80 # default port
+    if portservice == "wpa" or portservice == "http":
+       port1 = "80"
+    elif portservice == "telnet":
+         port1 = "23"
+    elif portservice == 0:
+         port1 = "80"
+    temp_port = input("Enter port [" + str(port1) + "] :")
+    if len(temp_port) == 0:
+        ports = port1
+    else:
+        ports = temp_port
+    print(ports)
+    return ports
+
+def nikto():
+    command = "nikto -C all -h " + ipadd() + " -p " + port(0)
+    print("Excuting the following command")
+    print("\033[91m" + f"{command}")
+    os.system(command)
+    print("\033[0m")
+
+def dirb():
+    choice = input("[1] = http\n[2] = https\nEnter choice: ")
+    if choice == "1":
+        os.system("dirb http://" + url() + ":" + port() + "/")
+    elif choice == "2":
+        os.system("dirb https://" + url() + ":" + port() + "/")
+    else:
+        print("Invalid choice")
+
+def gobust():
+    choice = input("[1] = http\n[2] = https\nEnter choice: ")
+    if choice == "1":
+        os.system("gobuster -u http://" + url() + "/" + " -w /usr/share/wordlists/dirb/common.txt dir")
+    elif choice == "2":
+        os.system("gobuster -u https://" + url() + "/" + " -w /usr/share/wordlists/dirb/common.txt dir")
+    else:
+        print("Invalid choice")
+
+def harvester():
+    os.system("theHarvester -l 500 -d " + ipadd() + " -b google")
+
+def ipadd():
+    global ipaddress
+    temp_ipaddress = str(input("Enter ip address of host ["  + ipaddress + "]:"))
+    if len(temp_ipaddress) > 0:
+       ipaddress = temp_ipaddress
+    print(ipaddress)
+    return ipaddress
+
+
+def iface():
+    interface = str(input("Enter interface name[eth0]: "))
+    if len(interface) == 0:
+        interface = "eth0"
+    print(interface)
+    return interface
+
 
 def url():
     urll = str(input("Enter url of target :"))
@@ -40,74 +136,18 @@ def john():
     print("Running John the Ripper")
     print("Assuming file:key has been created")
     print("Creating file:hash from file:key using john:")
-    command = "ssh2john key > hash"
-    print(f"{command}")
-    os.system(command)
+    os.system("ssh2john key > hash")
     print("Cracking password from file:hash using rockyou.txt")
-    command = "john -w=/usr/share/wordlists/rockyou.txt hash"
-    print(f"{command}")
-    os.system(command)
+    os.system("john -w=/usr/share/wordlists/rockyou.txt hash")
     print("With this private key password, you now can use it on key on [ssh -i key user@host]")
     print(" goto http://unix4lyfe.org to generate Hash")
 
-
-def fuzz():
-    command = "ffuf -u http://" + url() + "/FUZZ" + " -w /usr/share/wordlists/SecLists/Discovery/Web-Content/common.txt"
-    print(f"{command}")
-    os.system(command)
-
-def port():
-    temp_port = input("Enter port [80] :")
-    if len(temp_port) == 0:
-        ports = "80"
-    else:
-        ports = temp_port
-    print(ports)
-    return ports
-
-def nikto():
-    #ipa = input("Enter IP address: ")
-    #os.system("nikto -C all -h " + ipa)
-    command = "nikto -C all -h " + ipadd() + " -p " + port()
-    print("Excuting the following command")
-    print("\033[91m" + f"{command}")
-    os.system(command)
-    print("\033[0m")
-
-
-def dirb():
-    choice = input("[1] = http\n[2] = https\nEnter choice: ")
-    if choice == "1":
-        command = "dirb http://" + url() + ":" + port() + "/"
-        print(f"{command}")
-        os.system(command)
-    elif choice == "2":
-        command = "dirb https://" + url() + ":" + port() + "/"
-        print(f"{command}")
-        os.system(command)
-    else:
-        print("Invalid choice")
-
-def gobust():
-    choice = input("[1] = http\n[2] = https\nEnter choice: ")
-    if choice == "1":
-        os.system("gobuster -u http://" + url() + "/" + " -w /usr/share/wordlists/dirb/common.txt dir")
-    elif choice == "2":
-        os.system("gobuster -u https://" + url() + "/" + " -w /usr/share/wordlists/dirb/common.txt dir")
-    else:
-        print("Invalid choice")
-
-
-def harvester():
-    os.system("theHarvester -l 500 -d " + ipadd() + " -b google")
-
-#temp
 def hydra():
-    service = input("Enter service ssh/telnet/wpa/ftp :")
+    service = input("Enter service ssh/telnet/wpa :")
     if service != "wpa":
         loginname = input("Enter username or enter X to use user.txt :")
         password = input("Enter password or enter X to use pass.txt or R to use rockyou.txt :")
-        if loginname.upper() != "X":
+        if ((loginname != "X") or (loginname != "x")):
             command = "echo " + loginname + " > user.txt"
             os.system(command)
             print(f"{command}")
@@ -121,7 +161,7 @@ def hydra():
             command = "cp /usr/share/wordlists/rockyou.txt pass.txt"
             os.system(command)
             print(f"{command}")
-        command = "hydra -t 4 -L user.txt -P pass.txt -vV " + ipadd() + " " + service + " -s " + port()
+        command = "hydra -t 4 -L user.txt -P pass.txt -vV " + ipadd() + " " + service + " -s " + port(service)
         print(f"{command}")
         os.system(command)
     else:
@@ -158,20 +198,20 @@ def nmap():
     else:
         filename = "results.xml"
     # ipadd = input("Enter ip address of host: ")
-    os.system("sudo nmap -p- -sC -sV -oX " + filename + " " + ipadd())
+    os.system("sudo nmap  -sC -sV -oX " + filename + " " + ipadd())
     ques2 = input("Would like you like to see result firefox [y/n]: ")
-    if ques2.lower() == "y":
+    if ques2 == "y" or ques2 == "Y":
         os.system("xsltproc " + filename + " -o temp.html")
         os.system("firefox " + "temp.html")
 
 
 def nmap2():
     ques = input("Would you like to save to a file [y/n]: ")
-    if ques.lower() == "y":
+    if ques == "y" or ques == "Y":
         filename = input("Enter filename: ")
     else:
         filename = "results.xml"
-    command = "sudo nmap -p- -sC -sV -oX " + filename + " " + ipadd()
+    command = "sudo nmap -sC -sV -oX " + filename + " " + ipadd()
     # Echo Command
     print("Executing\n", command)
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -195,10 +235,6 @@ def nmap2():
     if ques2.lower() == "y":
         os.system("xsltproc " + filename + " -o temp.html")
         os.system("firefox " + "temp.html")
-
-
-
-
 
 # function data creates user.txt and pass.txt
 def userpass():
@@ -283,9 +319,7 @@ def unshadow():
          shadow = "shadow"
     command = "unshadow " + passwd + " " + shadow + " > mypass.txt"
     command2 = "john --wordlist=/usr/share/wordlists/rockyou.txt mypass.txt"
-    print(f"{command}")
     os.system(command)
-    print(f"{command2}")
     os.system(command2)
 
 # function that loads the file to be converted
@@ -335,9 +369,7 @@ def webcrawl():
     os.system("ls -la ./" + ipaddress )
 
 def dnsrecon():
-    command = "dnsrecon -t brt -d " + url()
-    print(f"{command}")
-    os.system(command)
+    os.system("dnsrecon -D /usr/share/wordlists/metasploit/unix_passwords.txt -d " + url() )
 
 def banner():
     print("\n")
@@ -374,25 +406,26 @@ while True:
     print("[E] gobuster (Hidden webpages")
     print("[F] dnsrecon (find subdomains")
     print("[G] Unshadow Password File Linux")
+    print("[H] binwalk ( check contents of file )")
     print("[X] to exit")
     ans = input("Input your selection :")
-    if ans == "1":
+    if (ans == "1"):
         arpscan()
-    elif ans == "2":
+    elif (ans == "2"):
         webcrawl()
-    elif ans == "3":
+    elif (ans == "3"):
         hexconvert()
-    elif ans == "4":
+    elif (ans == "4"):
         userpass()
-    elif ans == "5":
+    elif (ans == "5"):
         nmap2()
-    elif ans == "6":
+    elif (ans == "6"):
         hydra()
-    elif ans == "7":
+    elif (ans == "7"):
         smbclient()
-    elif ans == "8":
+    elif (ans == "8"):
         harvester()
-    elif ans == "9":
+    elif (ans == "9"):
         dirb()
     elif ans.upper() == "A":
         fuzz()
@@ -408,8 +441,11 @@ while True:
         dnsrecon()
     elif ans.upper() == "G":
         unshadow()
+    elif ans.upper() == "H":
+        binwalk()
     elif ans.lower() == "x":
         print("Goodbye")
         break
     else:
         print("Invalid entry")
+
